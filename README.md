@@ -1,16 +1,50 @@
-# React + Vite
+# AV Ranking
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+App de classement pour matchs d'aqua-volley (2v2 / 3v3, victoire à 20 pts avec 2 pts d'écart).
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19 + Vite
+- Tailwind CSS 4
+- Supabase (Postgres + Auth) — login + données partagées entre appareils
 
-## React Compiler
+## Configuration
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Crée un `.env.local` (non commité) avec les clés du projet Supabase (Project Settings → API) :
 
-## Expanding the Oxlint configuration
+```
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_ANON_KEY=...
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+Schéma de base à exécuter une fois dans le SQL Editor Supabase : `supabase/schema.sql`.
+
+Créer l'utilisateur admin : dashboard Supabase → Authentication → Users → Add user (Auto Confirm User).
+
+## Commandes
+
+```bash
+make install   # installe les dépendances
+make dev       # lance le serveur dev en arrière-plan (http://localhost:5183)
+make stop      # stoppe le serveur dev
+make build     # build de production
+make preview   # preview du build
+```
+
+Sans Makefile, équivalent npm :
+
+```bash
+npm install
+npm run dev
+npm run build
+npm run preview
+```
+
+## Fonctionnalités
+
+- **Login** — Supabase Auth
+- **Joueurs** — ajout/édition/suppression (Réglages)
+- **Nouveau match** — sélection joueurs présents, répartition équipes 2v2/3v3, saisie score
+- **Classement** — tri par points (barème configurable), filtre 2v2/3v3/tous, vue par date
+- **Profil joueur** — stats globales, série en cours, meilleur/pire adversaire et coéquipier
+- **Points** — barème victoire/défaite configurable (Réglages)
