@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+html {
+  background-color: #020617; /* slate-950 : couvre la zone d'overscroll */
+  color-scheme: dark;
+  /* Coupe le rebond/pull-to-refresh qui laissait voir le blanc */
+  overscroll-behavior: none;
+}
+
+body {
+  min-height: 100dvh;
+  overscroll-behavior: none;
+  /* Coupe le zoom double-tap, garde le scroll/tap normal */
+  touch-action: manipulation;
+}
