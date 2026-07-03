@@ -47,7 +47,7 @@ function App() {
   if (guest && !session) {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100">
-        <header className="border-b border-slate-800">
+        <header className="border-b border-slate-800 pt-[env(safe-area-inset-top)]">
           <div className="mx-auto max-w-md px-4 py-3 flex items-center gap-2">
             <img src={logo} alt="" className="h-9 w-9" />
             <h1 className="text-xl font-semibold tracking-tight flex-1">AV Ranking</h1>
@@ -90,11 +90,11 @@ function App() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-md px-4 py-6 pb-24">
+      <main className="mx-auto max-w-md px-4 py-6 pb-32">
         <Active canEdit />
       </main>
 
-      <nav className="fixed bottom-0 inset-x-0 border-t border-slate-800 bg-slate-950/95 backdrop-blur">
+      <nav className="fixed bottom-0 inset-x-0 border-t border-slate-800 bg-slate-950/95 backdrop-blur pb-[env(safe-area-inset-bottom)]">
         <div className="mx-auto max-w-md flex">
           {TABS.map((t) => (
             <button
@@ -102,12 +102,12 @@ function App() {
               onClick={() => setTab(t.key)}
               aria-label={t.label}
               aria-current={tab === t.key ? 'page' : undefined}
-              className={`flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 transition ${
+              className={`flex-1 flex flex-col items-center justify-center gap-1 py-3.5 transition ${
                 tab === t.key ? 'text-sky-400' : 'text-slate-500 hover:text-slate-300'
               }`}
             >
-              <t.Icon size={22} strokeWidth={tab === t.key ? 2.5 : 2} />
-              <span className="text-[10px] font-medium">{t.label}</span>
+              <t.Icon size={26} strokeWidth={tab === t.key ? 2.5 : 2} />
+              <span className="text-xs font-medium">{t.label}</span>
             </button>
           ))}
         </div>
