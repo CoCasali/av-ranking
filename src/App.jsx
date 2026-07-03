@@ -38,7 +38,7 @@ function App() {
 
   if (session === undefined) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-dvh bg-slate-950 flex items-center justify-center">
         <p className="text-slate-500 text-sm">Chargement…</p>
       </div>
     )
@@ -46,8 +46,8 @@ function App() {
 
   if (guest && !session) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100">
-        <header className="border-b border-slate-800 pt-[env(safe-area-inset-top)]">
+      <div className="h-dvh flex flex-col overflow-hidden bg-slate-950 text-slate-100">
+        <header className="flex-none border-b border-slate-800 pt-[env(safe-area-inset-top)]">
           <div className="mx-auto max-w-md px-4 py-3 flex items-center gap-2">
             <img src={logo} alt="" className="h-9 w-9" />
             <h1 className="text-xl font-semibold tracking-tight flex-1">AV Ranking</h1>
@@ -57,8 +57,10 @@ function App() {
           </div>
         </header>
 
-        <main className="mx-auto max-w-md px-4 py-6">
-          <Rankings />
+        <main className="flex-1 overflow-y-auto overscroll-contain">
+          <div className="mx-auto max-w-md px-4 py-6">
+            <Rankings />
+          </div>
         </main>
       </div>
     )
@@ -76,8 +78,8 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <header className="border-b border-slate-800">
+    <div className="h-dvh flex flex-col overflow-hidden bg-slate-950 text-slate-100">
+      <header className="flex-none border-b border-slate-800 pt-[env(safe-area-inset-top)]">
         <div className="mx-auto max-w-md px-4 py-3 flex items-center gap-2">
           <img src={logo} alt="" className="h-9 w-9" />
           <h1 className="text-xl font-semibold tracking-tight flex-1">AV Ranking</h1>
@@ -90,11 +92,13 @@ function App() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-md px-4 py-6 pb-32">
-        <Active canEdit />
+      <main className="flex-1 overflow-y-auto overscroll-contain">
+        <div className="mx-auto max-w-md px-4 py-6">
+          <Active canEdit />
+        </div>
       </main>
 
-      <nav className="fixed bottom-0 inset-x-0 border-t border-slate-800 bg-slate-950/95 backdrop-blur pb-[env(safe-area-inset-bottom)]">
+      <nav className="flex-none border-t border-slate-800 bg-slate-950/95 backdrop-blur pb-[env(safe-area-inset-bottom)]">
         <div className="mx-auto max-w-md flex">
           {TABS.map((t) => (
             <button
