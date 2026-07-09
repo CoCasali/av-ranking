@@ -185,6 +185,8 @@ export default function Rankings({ canEdit = false }) {
   const [mode, setMode] = useState('all')
   const [selectedPlayer, setSelectedPlayer] = useState(null)
   const [editingMatch, setEditingMatch] = useState(null)
+  const [filterIds, setFilterIds] = useState([])
+  const [filterOpen, setFilterOpen] = useState(false)
   const [players] = useAsyncList(api.listPlayers)
   const [allMatches, refetchMatches] = useAsyncList(api.listMatches)
   const [pointsConfig] = useAsyncList(api.getPointsConfig)
@@ -202,10 +204,34 @@ export default function Rankings({ canEdit = false }) {
     [allMatches, mode],
   )
 
+  // Filtre interne : classement uniquement sur les joueurs sélectionnés,
+  // en ne comptant que les matchs joués entre eux (tous les participants sélectionnés).
+  const filterActive = filterIds.length >= 4
+
+  const rankMatches = useMemo(() => {
+    if (!filterActive) return matches
+    const set = new Set(filterIds)
+    return matches.filter(
+      (m) => [...m.teamA, ...m.teamB].every((id) => set.has(id)),
+    )
+  }, [matches, filterIds, filterActive])
+
+  const rankPlayers = useMemo(() => {
+    if (!filterActive) return players ?? []
+    const set = new Set(filterIds)
+    return (players ?? []).filter((p) => set.has(p.id))
+  }, [players, filterIds, filterActive])
+
   const standings = useMemo(
-    () => (pointsConfig ? computeStandings(players ?? [], matches, pointsConfig) : []),
-    [players, matches, pointsConfig],
+    () => (pointsConfig ? computeStandings(rankPlayers, rankMatches, pointsConfig) : []),
+    [rankPlayers, rankMatches, pointsConfig],
   )
+
+  function toggleFilter(id) {
+    setFilterIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    )
+  }
 
   const dayGroups = useMemo(() => groupByDate(matches), [matches])
 
@@ -268,6 +294,62 @@ export default function Rankings({ canEdit = false }) {
         ))}
       </div>
 
+      {view === 'general' && (
+        <div className="rounded-lg border border-slate-800 bg-slate-900/50">
+          <button
+            type="button"
+            onClick={() => setFilterOpen((o) => !o)}
+            className="w-full flex items-center justify-between px-3 py-2.5 text-sm"
+          >
+            <span className="font-medium text-slate-300">
+              Classement global
+              {filterActive && (
+                <span className="ml-2 rounded-full bg-emerald-500/20 px-2 py-0.5 text-xs text-emerald-400">
+                  {filterIds.length} joueurs
+                </span>
+              )}
+            </span>
+            <span className="text-slate-500 text-xs">{filterOpen ? '▲' : '▼'}</span>
+          </button>
+          {filterOpen && (
+            <div className="border-t border-slate-800 px-3 py-3 space-y-3">
+              <p className="text-xs text-slate-500">
+                Sélectionne au moins 4 joueurs. Le classement ne compte que les matchs
+                joués entre eux.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {players.map((p) => {
+                  const on = filterIds.includes(p.id)
+                  return (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => toggleFilter(p.id)}
+                      className={`rounded-full px-3 py-1 text-xs font-medium transition border ${
+                        on
+                          ? 'bg-emerald-500 border-emerald-500 text-white'
+                          : 'border-slate-700 text-slate-400 hover:border-slate-600'
+                      }`}
+                    >
+                      {p.name}
+                    </button>
+                  )
+                })}
+              </div>
+              {filterIds.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setFilterIds([])}
+                  className="text-xs text-slate-500 hover:text-slate-300"
+                >
+                  Réinitialiser
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
       {view === 'general' ? (
         standings.length ? (
           <div className="overflow-x-auto -mx-4 px-4">
@@ -318,7 +400,11 @@ export default function Rankings({ canEdit = false }) {
             </table>
           </div>
         ) : (
-          <p className="text-slate-500 text-sm">Aucun match joué pour l'instant.</p>
+          <p className="text-slate-500 text-sm">
+            {filterActive
+              ? 'Aucun match joué entre ces joueurs.'
+              : "Aucun match joué pour l'instant."}
+          </p>
         )
       ) : dayGroups.length ? (
         <div className="space-y-5">
